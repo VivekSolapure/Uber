@@ -30,18 +30,20 @@ const userSchema = new mongoose.Schema({
 })
 
 userSchema.methods.generateAuthToken = function(){//Generating auth token
-    const token= jwt.sign({_id:this._id},process.env.JWT_SCRET);
+    const token= jwt.sign({_id:this._id},process.env.JWT_SCRET, {expiresIn: '24h'});// added token get expires in 24h and pushed in blackListTokenModel
     return token;
 }
 
-
-userSchema.methods.comparePasswprd = async function(password){//Generating auth token
+userSchema.methods.comparePassword = async function(password){//Generating auth token
+    const pass= await bcrypt.compare(password, this.password)
+    
     return await bcrypt.compare(password, this.password)
 }
 
 userSchema.statics.hashPassword= async function(password){
     return await bcrypt.hash(password, 10)
 }
+
 
 
 const userModel = mongoose.model("User", userSchema);
