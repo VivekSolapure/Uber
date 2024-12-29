@@ -154,21 +154,21 @@ The request body must be in JSON format and should include the following fields:
 - **Response Body**:
 
   ```json
-    {
-      "errors": [
-          {
-              "type": "field",
-              "msg": "Invalid Email",
-              "path": "email",
-              "location": "body"
-          },
-          {
-              "type": "field",
-              "msg": "Password is alLeast 5 letters long",
-              "path": "password",
-              "location": "body"
-          }
-      ]
+  {
+    "errors": [
+      {
+        "type": "field",
+        "msg": "Invalid Email",
+        "path": "email",
+        "location": "body"
+      },
+      {
+        "type": "field",
+        "msg": "Password is alLeast 5 letters long",
+        "path": "password",
+        "location": "body"
+      }
+    ]
   }
   ```
 
@@ -182,6 +182,7 @@ The request body must be in JSON format and should include the following fields:
     "message": "User  not found"
   }
   ```
+
 - **Status Code**: `401 Unauthorized`
 - **Response Body**:
 
@@ -290,5 +291,147 @@ This endpoint requires the user to be authenticated. A valid JWT token must be p
   ```json
   {
     "error": "An error occurred while logging out"
+  }
+  ```
+
+## `/captains/register` Endpoint Overview
+
+The `/captains/register` endpoint is used to register a new captain in the system. It accepts captain details and performs validation before creating a new captain record in the database.
+
+### HTTP Method
+
+- **POST**
+
+### URL
+
+- `/captains/register`
+
+## Request Body
+
+The request body must be in JSON format and should include the following fields:
+
+- **`email`** (string, required): The email address of the captain. It must be a valid email format.
+- **`fullname`** (object, required): An object containing the captain's full name.
+  - **`firstname`** (string, required): The first name of the captain. It must be at least 3 characters long.
+  - **`lastname`** (string, optional): The last name of the captain.
+- **`password`** (string, required): The password for the captain account. It must be at least 5 characters long.
+- **`vehicle`** (object, required): An object containing the vehicle details of the captain.
+  - **`color`** (string, required): The color of the vehicle. It must be at least 3 characters long.
+  - **`plate`** (string, required): The plate number of the vehicle. It must be at least 3 characters long.
+  - **`capacity`** (number, required): The capacity of the vehicle. It must be at least 1.
+  - **`vehicleType`** (string, required): The type of vehicle. It must be one of the following: "car", "motorcycle", "auto".
+
+### Example Request
+
+````json
+  {
+    "email": "captain@example.com",
+    "fullname": {
+      "firstname": "Jane",
+      "lastname": "Doe"
+    },
+    "password": "securepassword",
+    "vehicle": {
+      "color": "red",
+      "plate": "XYZ123",
+      "capacity": 4,
+      "vehicleType": "car"
+    }
+  }
+````
+
+### Response
+
+#### Success Response
+
+- **Status Code**: `201 Created`
+- **Response Body**:
+
+```json
+  {
+    "token": "generatedAuthToken",
+    "captain": {
+      "fullname": {
+        "firstname": "Jane",
+        "lastname": "Doe"
+      },
+      "email": "captain@example.com",
+      "vehicle": {
+        "color": "red",
+        "plate": "XYZ123",
+        "capacity": 4,
+        "vehicleType": "car"
+      }
+    }
+  }
+```
+
+#### Error Response
+
+- **Status Code**: `400 Bad Request`
+- **Response Body**:
+
+  ```json
+  {
+    "errors": [
+      {
+        "type": "field",
+        "value": "invalidemail.com",
+        "msg": "Invalid Email",
+        "path": "email",
+        "location": "body"
+      },
+      {
+        "type": "field",
+        "value": "ab",
+        "msg": "Firstname must be at least 3 letters long",
+        "path": "fullname.firstname",
+        "location": "body"
+      },
+      {
+        "type": "field",
+        "value": "123",
+        "msg": "Password must be at least 5 letters long",
+        "path": "password",
+        "location": "body"
+      },
+      {
+        "type": "field",
+        "value": "bl",
+        "msg": "Color must be at least 3 letters long",
+        "path": "vehicle.color",
+        "location": "body"
+      },
+      {
+        "type": "field",
+        "value": "XY",
+        "msg": "Plate must be at least 3 characters long",
+        "path": "vehicle.plate",
+        "location": "body"
+      },
+      {
+        "type": "field",
+        "value": "0",
+        "msg": "Capacity must be at least 1",
+        "path": "vehicle.capacity",
+        "location": "body"
+      },
+      {
+        "type": "field",
+        "value": "bike",
+        "msg": "Model must be one of the following: car, motorcycle, auto",
+        "path": "vehicle.vehicleType",
+        "location": "body"
+      }
+    ]
+  }
+  ```
+
+- **Status Code**: `500 Internal Server Error`
+- **Response Body**:
+
+  ```json
+  {
+    "error": "All fields are required"
   }
   ```

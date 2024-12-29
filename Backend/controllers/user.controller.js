@@ -11,6 +11,12 @@ module.exports.registerUser  = async (req, res, next) => {
 
     const { email, fullname, password } = req.body;
 
+    const isUserExist = await userModel.findOne({email})
+    if(isUserExist){
+        return res.status(400).json({Error : "User alreadly exist"})
+    }
+
+
     const hashPassword = await userModel.hashPassword(password);
 
     const user = await userService.createUser ({
@@ -20,7 +26,7 @@ module.exports.registerUser  = async (req, res, next) => {
         password: hashPassword
     });
 
-    await user.save();
+    await user.save()
 
     const token = user.generateAuthToken();
     res.status(201).json({ token, user });
