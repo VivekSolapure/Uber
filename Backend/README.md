@@ -435,3 +435,181 @@ The request body must be in JSON format and should include the following fields:
     "error": "All fields are required"
   }
   ```
+## `/captains/login` Endpoint Overview
+
+The `/captains/login` endpoint is used to authenticate a captain and provide a session token.
+
+### HTTP Method
+
+- **POST**
+
+### URL
+
+- `/captains/login`
+
+## Request Body
+
+The request body must be in JSON format and should include the following fields:
+
+- **`email`** (string, required): The email address of the captain. It must be a valid email format.
+- **`password`** (string, required): The password for the captain account. It must be at least 5 characters long.
+
+### Example Request
+
+```json
+{
+  "email": "captain@example.com",
+  "password": "securepassword"
+}
+```
+## Response
+
+### Success Response
+
+- **Status Code**: `200 OK`
+- **Response Body**:
+
+  ```json
+  {
+    "token": "generatedAuthToken",
+    "captain": {
+      "fullname": {
+        "firstname": "Jane",
+        "lastname": "Doe"
+      },
+      "email": "captain@example.com",
+      "vehicle": {
+        "color": "red",
+        "plate": "XYZ123",
+        "capacity": 4,
+        "vehicleType": "car"
+      }
+    }
+  }
+  ```
+### Error Response
+
+- **Status Code**: `400 Bad Request`
+- **Response Body**:
+
+  ```json
+  {
+    "errors": [
+      {
+        "type": "field",
+        "msg": "Invalid email or password",
+        "path": "email",
+        "location": "body"
+      }
+    ]
+  }
+  ```
+
+## `/captains/profile` Endpoint Overview
+
+The `/captains/profile` endpoint is used to retrieve the profile information of the authenticated user i.e if the token is valid in cookie or token.
+
+### HTTP Method
+
+- **GET**
+
+### URL
+
+- `/captains/profile`
+
+### Authentication
+
+This endpoint requires the user to be authenticated. A valid JWT token must be provided in the request headers or as a cookie.
+
+### Response
+
+#### Success Response
+
+- **Status Code**: `200 OK`
+- **Response Body**:
+
+  ```json
+  {
+    "fullname": {
+      "firstname": "Jane",
+      "lastname": "Doe"
+    },
+    "email": "captain@example.com",
+    "vehicle": {
+      "color": "red",
+      "plate": "XYZ123",
+      "capacity": 4,
+      "vehicleType": "car"
+    }
+  }
+  ```
+
+#### Error Response
+
+- **Status Code**: `401 Unauthorized`
+- **Response Body**:
+
+  ```json
+  {
+    "message": "Please login first"
+  }
+  ```
+
+- **Status Code**: `500 Internal Server Error`
+- **Response Body**:
+
+  ```json
+  {
+    "error": "Unauthorized"
+  }
+  ```
+
+## `/captains/logout` Endpoint Overview
+
+The `/captains/logout` endpoint is used to log out the authenticated user by clearing the session token and blacklisting it.
+
+### HTTP Method
+
+- **GET**
+
+### URL
+
+- `/captains/logout`
+
+### Authentication
+
+This endpoint requires the user to be authenticated. A valid JWT token must be provided in the request headers or as a cookie.
+
+### Response
+
+#### Success Response
+
+- **Status Code**: `200 OK`
+- **Response Body**:
+
+  ```json
+  {
+    "message": "Logged out successfully"
+  }
+  ```
+
+#### Error Response
+
+- **Status Code**: `401 Unauthorized`
+- **Response Body**:
+
+  ```json
+  {
+    "message": "Unauthorized"
+  }
+  ```
+
+- **Status Code**: `500 Internal Server Error`
+- **Response Body**:
+
+  ```json
+  {
+    "error": "An error occurred while logging out"
+  }
+  ```
+  

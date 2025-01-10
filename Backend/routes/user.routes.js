@@ -20,9 +20,9 @@ router.get('/login', [ // login user with validation
 
 ], userController.loginUser) //  we will perform action in userController.loginUser function
 
-router.get('/profile', authMiddleware.isLogin, userController.getUserProfile)// this is for getting the user profile information which is only accessible after login
+router.get('/profile', authMiddleware.authUser, userController.getUserProfile)// this is for getting the user profile information which is only accessible after login
 
-router.get('/logout', authMiddleware.isLogin, userController.logoutUser)
+router.get('/logout', authMiddleware.authUser, userController.logoutUser)
 
 //before creating logout route , we need to create logout middleware where we need to handle the black list the token which the token 
 // who are logged out, so for storing the we are using ttl (time to live) instead of storing it in the DB
